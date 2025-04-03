@@ -16,7 +16,7 @@ A customizable Flutter countdown timer widget with blinking effects that intensi
 
 | Basic Timer | Custom UI | Controller Example |
 |-------------|-----------|---------------------|
-| ![Basic](demo/basic.gif) | ![Custom](demo/custom.gif) | ![Controller](demo/controller.gif) |
+| ![basic_usage](https://github.com/user-attachments/assets/9919f2ac-8f3d-47f2-8e7f-a752fd1a0780) | ![custom_ui](https://github.com/user-attachments/assets/158f6796-f37a-4faf-a58e-dea63c4fda4e) | ![with_controller](https://github.com/user-attachments/assets/bd094059-be8a-4f6d-92bb-812bbb8b5720) |
 
 
 ## Installation 📦
