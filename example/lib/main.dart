@@ -28,37 +28,90 @@ class _BlinkingTimerExampleState extends State<BlinkingTimerExample> {
       title: 'Blinking Timer Example',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.yellow,
         body: Center(
-          // child: BlinkingTimer(
-          //   duration: const Duration(seconds: 20),
-          //   showMilliseconds: true,
-          // ),
-
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              /// Example 1: Basic Usage
               BlinkingTimer(
-                duration: Duration(minutes: exampleMinute),
-                controller: timerController,
-                onTimeUpThreshold: () => debugPrint('Time up!'),
+                duration: const Duration(seconds: 10),
+                showMilliseconds: true,
+                slowBlinkingThreshold: 0.5,
+                fastBlinkingThreshold: 0.3,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+              const SizedBox(height: 20),
+
+              /// Example 2: Custom UI
+              BlinkingTimer(
+                duration: const Duration(seconds: 11),
+                initialColor: Colors.blue,
+                warningColor: Colors.orange,
+                criticalColor: Colors.red,
+                customTimerUI: (text, color, progress, _, isBlinking) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 75,
+                        height: 75,
+                        child: CircularProgressIndicator(
+                          value: progress,
+                          strokeWidth: 10,
+                          color: color,
+                          backgroundColor: color.withOpacity(0.1),
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            text,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color:
+                                  isBlinking ? color.withOpacity(0.7) : color,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "${(progress * 100).toStringAsFixed(0)}%",
+                            style: TextStyle(color: color.withOpacity(0.8)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              /// Example 3: Advance Usage using Controller
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: timerController.pause,
-                    child: const Text('Pause'),
+                  BlinkingTimer(
+                    duration: const Duration(minutes: 1),
+                    controller: timerController,
+                    onTimeUpThreshold: () => debugPrint('Time up!'),
                   ),
-                  ElevatedButton(
-                    onPressed: timerController.resume,
-                    child: const Text('Resume'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => timerController.restart(
-                      Duration(minutes: exampleMinute),
-                    ),
-                    child: const Text('Restart Timer'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: timerController.pause,
+                        child: Text('Pause'),
+                      ),
+                      ElevatedButton(
+                        onPressed: timerController.resume,
+                        child: Text('Resume'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () =>
+                            timerController.restart(Duration(minutes: 1)),
+                        child: Text('Restart Timer'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -66,6 +119,7 @@ class _BlinkingTimerExampleState extends State<BlinkingTimerExample> {
           ),
         ),
       ),
+      // home: const StartScreen(),
     );
   }
 }
