@@ -2,17 +2,17 @@ import 'package:blinking_timer/blinking_timer.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  runApp(const QuizMaster());
+  runApp(const BlinkingTimerExample());
 }
 
-class QuizMaster extends StatefulWidget {
-  const QuizMaster({super.key});
+class BlinkingTimerExample extends StatefulWidget {
+  const BlinkingTimerExample({super.key});
 
   @override
-  State<QuizMaster> createState() => _QuizMasterState();
+  State<BlinkingTimerExample> createState() => _BlinkingTimerExampleState();
 }
 
-class _QuizMasterState extends State<QuizMaster> {
+class _BlinkingTimerExampleState extends State<BlinkingTimerExample> {
   int exampleMinute = 1;
   late final BlinkingTimerController timerController;
 

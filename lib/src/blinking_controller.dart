@@ -1,3 +1,6 @@
+// Copyright (c) 2025, Sufi Aurangzeb Hossain.
+// Licensed under the BSD 3-Clause License - see LICENSE file for details.
+
 abstract class TimerStateController {
   void pause();
 
