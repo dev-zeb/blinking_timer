@@ -125,7 +125,7 @@ Widget build(BuildContext context) {
 | `onTimeUpThreshold`      | `VoidCallback?`    | `null`       | Called when timer reaches zero |
 | `slowBlinkingThreshold`  | `double`           | `0.25`       | When slow blinking starts (0.0-1.0) |
 | `fastBlinkingThreshold`  | `double`           | `0.10`       | When fast blinking starts (must be < slow threshold) |
-| `customTimerUI`          | `Widget Function(String, Color)?` | `null`       | Builder for custom displays |
+| `customTimerUI`          | `Widget Function(String timeText, Color textColor, double progress, bool shouldBlink, bool isBlinking,)?` | `null` | Builder for custom displays |
 | `controller`             | `BlinkingTimerController?` | `null`       | Programmatic control |
 
 ## Troubleshooting 🔧
