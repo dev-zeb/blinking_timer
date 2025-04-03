@@ -120,14 +120,13 @@ void main() {
         home: Scaffold(
           body: BlinkingTimer(
             duration: const Duration(seconds: 5),
-            customTimerUI: (text, color) {
-              return Container(
-                padding: const EdgeInsets.all(8),
-                color: Colors.black,
-                child: Text(text, style: TextStyle(color: color)),
+            customTimerUI: (timeText, color, progress, shouldBlink, isBlinking) {
+              return AnimatedOpacity(
+                opacity: isBlinking ? 0.5 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: Text(timeText, style: TextStyle(color: color)),
               );
             },
-            onTimeUpThreshold: () {},
           ),
         ),
       ),

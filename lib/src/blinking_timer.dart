@@ -18,7 +18,18 @@ class BlinkingTimer extends StatefulWidget {
   final bool showMilliseconds;
 
   /// Custom widget builder for complete UI control
-  final Widget Function(String timeText, Color textColor)? customTimerUI;
+  // final Widget Function(String timeText, Color textColor)? customTimerUI;
+
+  final Widget Function(
+    String timeText,
+    Color textColor,
+    double progress,
+    bool shouldBlink,
+    bool isBlinking,
+  )? customTimerUI;
+
+  /// Whether to apply blinking effects to custom UI (default: true)
+  final bool enableBlinking;
 
   /// Duration between slow blinks (default: 450ms)
   final Duration slowBlinkingDuration;
@@ -84,6 +95,7 @@ class BlinkingTimer extends StatefulWidget {
     this.controller,
     this.showMilliseconds = false,
     this.customTimerUI,
+    this.enableBlinking = true,
     this.slowBlinkingDuration = const Duration(milliseconds: 450),
     this.fastBlinkingDuration = const Duration(milliseconds: 250),
     this.slowBlinkingThreshold = 0.25,
@@ -248,10 +260,19 @@ class _BlinkingTimerState extends State<BlinkingTimer>
             : widget.initialColor;
 
     return Color.lerp(
-      color.withAlpha(255), // Fully opaque
-      color.withAlpha(128), // Half transparent (~50% opacity)
-      _blinkAnimation.value, // Animation value (0-1)
+      color.withAlpha(255),
+      color.withAlpha(128),
+      _blinkAnimation.value,
     )!;
+  }
+
+  Color _getBaseColor(double progress) {
+    if (_remainingMilliseconds <= 0) return widget.endedColor;
+    return progress <= widget.fastBlinkingThreshold
+        ? widget.criticalColor
+        : progress <= widget.slowBlinkingThreshold
+            ? widget.warningColor
+            : widget.initialColor;
   }
 
   Color _getProgressColor() {
@@ -266,16 +287,32 @@ class _BlinkingTimerState extends State<BlinkingTimer>
             : widget.initialColor;
   }
 
+  bool _shouldBlink() {
+    final progress = _remainingMilliseconds / widget.duration.inMilliseconds;
+    return progress <= widget.fastBlinkingThreshold ||
+        progress <= widget.slowBlinkingThreshold;
+  }
+
   @override
   Widget build(BuildContext context) {
     final timeText =
         _remainingMilliseconds > 0 ? _formatTime() : widget.timeUpText;
-    final textColor = _getTextColor();
-    final progressColor = _getProgressColor();
+    // final textColor = _getTextColor();
     final progress = _remainingMilliseconds / widget.duration.inMilliseconds;
+    // Calculate colors considering blink state
+    final Color textColor =
+        widget.enableBlinking ? _getTextColor() : _getBaseColor(progress);
+    final Color progressColor = _getProgressColor();
+    final shouldBlink = _shouldBlink();
 
     if (widget.customTimerUI != null) {
-      return widget.customTimerUI!(timeText, textColor);
+      return widget.customTimerUI!(
+        timeText,
+        textColor,
+        progress,
+        shouldBlink,
+        widget.enableBlinking ? _blinkAnimation.value < 0.5 : false,
+      );
     }
 
     return Container(
