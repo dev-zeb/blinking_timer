@@ -16,7 +16,7 @@ A customizable Flutter countdown timer widget with blinking effects that intensi
 
 | Basic Timer | Custom UI | Controller Example |
 |-------------|-----------|---------------------|
-| ![basic_usage](https://imgur.com/gul3tjJ) | ![custom_ui](https://imgur.com/yUYU9vq) | ![with_controller](https://imgur.com/ctyLwYc) |
+| ![basic_usage](https://github.com/dev-zeb/assets/blob/develop/projects/flutter/packages/blinking_timer/gif/basic_usage.gif) | ![custom_ui](https://github.com/dev-zeb/assets/blob/develop/projects/flutter/packages/blinking_timer/gif/custom_ui.gif) | ![with_controller](https://github.com/dev-zeb/assets/blob/develop/projects/flutter/packages/blinking_timer/gif/with_controller.gif) |
 
 
 ## Installation 📦
@@ -112,7 +112,6 @@ Widget build(BuildContext context) {
         ),
       ),
     ),
-    // home: const StartScreen(),
   );
 }
 ```
@@ -130,16 +129,14 @@ Widget build(BuildContext context) {
 
 ## Troubleshooting 🔧
 
-### Timer doesn't blink
+#### Timer doesn't blink
 - Ensure `slowBlinkingThreshold` > `fastBlinkingThreshold`
 - Check if `onTimeUpThreshold` is properly wired
 
-### Controller not working
+#### Controller not working
 - Verify `controller` is initialized before widget build
 - Don't recreate the controller in `build()`
 
-### UI not updating
+#### UI not updating
 - Wrap custom UI in `MaterialApp`/`CupertinoApp`
 - Ensure parent widgets aren't blocking repaints
-
-## Support the Project ❤️
