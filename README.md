@@ -23,7 +23,7 @@ A customizable Flutter countdown timer widget with blinking effects that intensi
 Add to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  blinking_timer: ^1.0.0
+  blinking_timer: ^1.0.2
 ```
 
 ## Basic Usage 🚀
