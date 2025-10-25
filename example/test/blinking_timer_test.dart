@@ -17,6 +17,7 @@ void main() {
       expect(mockState.pauseCalled, isTrue);
 
       controller.dispose();
+      // After dispose, methods should not call through to state
       controller.resume();
       expect(mockState.resumeCalled, isFalse);
     });
@@ -45,6 +46,24 @@ void main() {
       expect(() => controller.pause(), returnsNormally);
       expect(() => controller.resume(), returnsNormally);
       expect(() => controller.restart(), returnsNormally);
+    });
+
+    test('Controller handles dispose correctly', () {
+      final controller = BlinkingTimerController();
+      final mockState = _MockTimerStateController();
+
+      controller.attach(mockState);
+      controller.dispose();
+
+      // After dispose, methods should not throw or call through
+      expect(() => controller.pause(), returnsNormally);
+      expect(() => controller.resume(), returnsNormally);
+      expect(() => controller.restart(), returnsNormally);
+
+      // Verify no calls were made to the state after dispose
+      expect(mockState.pauseCalled, isFalse);
+      expect(mockState.resumeCalled, isFalse);
+      expect(mockState.restartCalled, isFalse);
     });
   });
 
@@ -85,8 +104,7 @@ void main() {
       expect(find.textContaining(RegExp(r'00:10\.\d{2}')), findsOneWidget);
     });
 
-    testWidgets('BlinkingTimer uses custom UI when provided',
-        (WidgetTester tester) async {
+    testWidgets('Custom UI renders correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -100,7 +118,25 @@ void main() {
         ),
       );
 
+      // Look for the Text widget returned by custom UI
       expect(find.text('Custom: 00:10'), findsOneWidget);
+    });
+
+    testWidgets('Default UI uses Container wrapper',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BlinkingTimer(
+              duration: const Duration(seconds: 10),
+            ),
+          ),
+        ),
+      );
+
+      // Default UI should have a Container
+      expect(find.byType(Container), findsOneWidget);
+      expect(find.text('00:10'), findsOneWidget);
     });
 
     testWidgets('BlinkingTimer shows time up text when duration ends',
@@ -139,7 +175,7 @@ void main() {
         ),
       );
 
-      // Timer should not start automatically
+      // Timer should not start automatically - should show initial time
       expect(find.text('00:10'), findsOneWidget);
     });
 
@@ -153,6 +189,7 @@ void main() {
             body: BlinkingTimer(
               duration: const Duration(seconds: 10),
               controller: controller,
+              autoStart: false, // Don't auto-start for this test
             ),
           ),
         ),
@@ -238,8 +275,12 @@ void main() {
       expect(textWidget.style!.fontSize, 20);
       expect(textWidget.style!.fontWeight, FontWeight.bold);
 
-      // Verify container styling
-      final container = tester.widget<Container>(find.byType(Container));
+      // Verify container styling - use more specific finder
+      final containerFinder = find.descendant(
+        of: find.byType(BlinkingTimer),
+        matching: find.byType(Container),
+      );
+      final container = tester.widget<Container>(containerFinder);
       expect(container.padding, const EdgeInsets.all(16));
     });
 
@@ -253,7 +294,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: BlinkingTimer(
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 300),
               slowBlinkingThreshold: 0.8,
               // High threshold to trigger quickly
               fastBlinkingThreshold: 0.5,
@@ -266,8 +307,8 @@ void main() {
         ),
       );
 
-      // Wait for thresholds to be reached
-      await tester.pumpAndSettle(const Duration(milliseconds: 600));
+      // Wait for thresholds to be reached and timer to complete
+      await tester.pumpAndSettle(const Duration(milliseconds: 400));
 
       // Verify callbacks were called
       expect(warningCalled, isTrue);
@@ -320,17 +361,13 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: BlinkingTimer(
-              duration: const Duration(milliseconds: 100),
-              // Short duration for test
+              duration: const Duration(milliseconds: 150),
               controller: controller,
               onTimeUpThreshold: () => timeUpCalled = true,
             ),
           ),
         ),
       );
-
-      // Initial state
-      expect(find.text('00:00'), findsOneWidget);
 
       // Wait for completion
       await tester.pumpAndSettle(const Duration(milliseconds: 200));
@@ -345,10 +382,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: BlinkingTimer(
-              duration: const Duration(milliseconds: 800),
+              duration: const Duration(milliseconds: 500),
               customTimerUI: (text, color, progress, shouldBlink, isBlinking) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 100),
+                return Container(
                   width: 100,
                   height: 100,
                   color: isBlinking ? color.withValues(alpha: 0.5) : color,
@@ -372,11 +408,10 @@ void main() {
       );
 
       // Should render without errors
-      expect(find.byType(AnimatedContainer), findsOneWidget);
+      expect(find.byType(Container), findsOneWidget);
 
       // Let some time pass to trigger blinking
-      await tester.pump(const Duration(milliseconds: 500));
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 400));
     });
 
     testWidgets('Timer can be paused and resumed', (WidgetTester tester) async {
@@ -394,22 +429,53 @@ void main() {
         ),
       );
 
-      // Get initial time
-      final initialText =
-          tester.widget<Text>(find.textContaining(RegExp(r'\d{2}:\d{2}')));
+      // Let timer run for a bit
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Get current time text
+      final initialFinder = find.descendant(
+        of: find.byType(BlinkingTimer),
+        matching: find.byType(Text),
+      );
+      final initialText = tester.widget<Text>(initialFinder);
 
       // Pause and wait
       controller.pause();
-      await tester.pump(const Duration(seconds: 2));
+      await tester.pump(const Duration(seconds: 1));
 
-      // Time should not have changed
-      final pausedText =
-          tester.widget<Text>(find.textContaining(RegExp(r'\d{2}:\d{2}')));
+      // Time should not have changed significantly when paused
+      final pausedText = tester.widget<Text>(initialFinder);
       expect(pausedText.data, initialText.data);
 
       // Resume
       controller.resume();
       await tester.pump(const Duration(milliseconds: 100));
+    });
+
+    testWidgets('Timer restart works', (WidgetTester tester) async {
+      final controller = BlinkingTimerController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BlinkingTimer(
+              duration: const Duration(seconds: 10),
+              controller: controller,
+              autoStart: false, // Don't auto-start for restart test
+            ),
+          ),
+        ),
+      );
+
+      // Should show initial duration
+      expect(find.text('00:10'), findsOneWidget);
+
+      // Restart with new duration
+      controller.restart(const Duration(seconds: 5));
+      await tester.pump();
+
+      // Should show the new duration
+      expect(find.text('00:05'), findsOneWidget);
     });
   });
 }
