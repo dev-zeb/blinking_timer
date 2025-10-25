@@ -1,6 +1,6 @@
 name: blinking_timer
 description: A customizable countdown timer with blinking effects that intensify as time runs out.
-version: 1.0.1
+version: 1.0.2
 license: BSD-3-Clause
 repository: https://github.com/dev-zeb/blinking_timer
 documentation: https://github.com/dev-zeb/blinking_timer#readme
