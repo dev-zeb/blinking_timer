@@ -8,6 +8,7 @@ This project follows [Semantic Versioning](https://semver.org/).
 ## [v1.0.2] — Hotfix: Add Missing Platform Projects and README.md file — 2025-10-25
 
 - Add the missing platform folder for the example project.
+- Add new test cases and fix failing test files.
 - Update `example/main.dart` file to have widget labels.
 - Update `CHANGELOG.md` with version info and format fixes.
 - Update package version in `README.md`.
