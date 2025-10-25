@@ -2,7 +2,7 @@
 // Licensed under the BSD 3-Clause License - see LICENSE file for details.
 
 import 'package:blinking_timer/blinking_timer.dart';
-import 'package:example/main.dart';
+import 'package:blinking_timer_example/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

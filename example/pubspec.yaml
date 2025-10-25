@@ -1,4 +1,4 @@
-name: Blinking-Timer-Example
+name: blinking_timer_example
 description: "An example project containing the Blinking Timer Widget."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
