@@ -120,7 +120,8 @@ void main() {
         home: Scaffold(
           body: BlinkingTimer(
             duration: const Duration(seconds: 5),
-            customTimerUI: (timeText, color, progress, shouldBlink, isBlinking) {
+            customTimerUI:
+                (timeText, color, progress, shouldBlink, isBlinking) {
               return AnimatedOpacity(
                 opacity: isBlinking ? 0.5 : 1.0,
                 duration: const Duration(milliseconds: 200),

@@ -18,7 +18,7 @@ void main() {
 
       controller.dispose();
       controller.resume();
-      expect(mockState.resumeCalled, isFalse); // Should not work after dispose
+      expect(mockState.resumeCalled, isFalse);
     });
 
     test('Controller methods work when attached', () {
@@ -93,9 +93,7 @@ void main() {
             body: BlinkingTimer(
               duration: const Duration(seconds: 10),
               customTimerUI: (text, color, progress, shouldBlink, isBlinking) {
-                return Container(
-                  child: Text('Custom: $text'),
-                );
+                return Text('Custom: $text');
               },
             ),
           ),
